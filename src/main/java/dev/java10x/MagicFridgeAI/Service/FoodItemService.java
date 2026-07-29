@@ -2,17 +2,19 @@ package dev.java10x.MagicFridgeAI.Service;
 
 import dev.java10x.MagicFridgeAI.Model.FoodItem;
 import dev.java10x.MagicFridgeAI.Repository.FoodItemRepository;
-import org.hibernate.metamodel.mapping.ForeignKeyDescriptor;
 import org.springframework.stereotype.Service;
 
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class FoodItemService {
 
-    private FoodItemRepository repository;
+    private final FoodItemRepository repository;
+
+    public FoodItemService(FoodItemRepository repository) {
+        this.repository = repository;
+    }
 
     public FoodItem criarFoodItem(FoodItem foodItem){
        return repository.save(foodItem);
@@ -35,7 +37,8 @@ public class FoodItemService {
     }
 
     public List<FoodItem> listarFoodItems(){
-        return repository.findAll();
+        List<FoodItem> list = repository.findAll();
+        return list;
     }
 
     public FoodItem alterarFoodItem(Long id, FoodItem foodItem){
