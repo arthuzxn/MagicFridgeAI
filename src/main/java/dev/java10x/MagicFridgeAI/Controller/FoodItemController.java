@@ -30,7 +30,7 @@ public class FoodItemController {
     public ResponseEntity<String> deletarFoodItem(@PathVariable Long id){
         FoodItem foodItemDeletar = service.deletarFoodItem(id);
         if(foodItemDeletar!=null){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Food item deletado com sucesso");
+            return ResponseEntity.noContent().build();
         }else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Food item não encontrado para deleção.");
         }
@@ -53,7 +53,7 @@ public class FoodItemController {
     }
 
     @PutMapping("alterar/{id}")
-    public ResponseEntity<?> alterarFoodItem(Long id, FoodItem foodItem){
+    public ResponseEntity<?> alterarFoodItem(@PathVariable Long id,@RequestBody FoodItem foodItem){
         FoodItem foodItemAlterado = service.alterarFoodItem(id,foodItem);
         if(foodItemAlterado!=null){
             return ResponseEntity.ok().body(foodItemAlterado);
