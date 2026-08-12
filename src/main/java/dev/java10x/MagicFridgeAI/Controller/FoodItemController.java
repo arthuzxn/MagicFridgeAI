@@ -1,5 +1,6 @@
 package dev.java10x.MagicFridgeAI.Controller;
 
+import dev.java10x.MagicFridgeAI.DTO.FoodItemDTO;
 import dev.java10x.MagicFridgeAI.Model.FoodItem;
 import dev.java10x.MagicFridgeAI.Service.FoodItemService;
 import org.hibernate.metamodel.mapping.ForeignKeyDescriptor;
@@ -21,14 +22,14 @@ public class FoodItemController {
     }
 
     @PostMapping("criar")
-    public ResponseEntity<FoodItem> criarFoodItem(@RequestBody FoodItem foodItem){
-        FoodItem foodItemSalvo = service.criarFoodItem(foodItem);
+    public ResponseEntity<FoodItemDTO> criarFoodItem(@RequestBody FoodItemDTO foodItemDTO){
+        FoodItemDTO foodItemSalvo = service.criarFoodItem(foodItemDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(foodItemSalvo);
     }
 
     @DeleteMapping("deletar")
     public ResponseEntity<String> deletarFoodItem(@PathVariable Long id){
-        FoodItem foodItemDeletar = service.deletarFoodItem(id);
+        FoodItemDTO foodItemDeletar = service.deletarFoodItem(id);
         if(foodItemDeletar!=null){
             return ResponseEntity.noContent().build();
         }else{
@@ -38,7 +39,7 @@ public class FoodItemController {
 
     @GetMapping("listar/{id}")
     public ResponseEntity<?> listarFoodItemId(@PathVariable Long id){
-        FoodItem foodItemId = service.listarFoodItemId(id);
+        FoodItemDTO foodItemId = service.listarFoodItemId(id);
         if(foodItemId!=null){
             return ResponseEntity.ok().body(foodItemId);
         }else{
@@ -47,14 +48,14 @@ public class FoodItemController {
     }
 
     @GetMapping("listar")
-    public ResponseEntity<List<FoodItem>>listarFoodItems(){
-        List<FoodItem> foodItems = service.listarFoodItems();
+    public ResponseEntity<List<FoodItemDTO>>listarFoodItems(){
+        List<FoodItemDTO> foodItems = service.listarFoodItems();
         return ResponseEntity.ok(foodItems);
     }
 
     @PutMapping("alterar/{id}")
-    public ResponseEntity<?> alterarFoodItem(@PathVariable Long id,@RequestBody FoodItem foodItem){
-        FoodItem foodItemAlterado = service.alterarFoodItem(id,foodItem);
+    public ResponseEntity<?> alterarFoodItem(@PathVariable Long id,@RequestBody FoodItemDTO foodItemDTO){
+        FoodItemDTO foodItemAlterado = service.alterarFoodItem(id,foodItemDTO);
         if(foodItemAlterado!=null){
             return ResponseEntity.ok().body(foodItemAlterado);
         }else{

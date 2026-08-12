@@ -1,27 +1,34 @@
 package dev.java10x.MagicFridgeAI.Service;
 
+import dev.java10x.MagicFridgeAI.DTO.FoodItemDTO;
+import dev.java10x.MagicFridgeAI.DTO.FoodItemMapper;
 import dev.java10x.MagicFridgeAI.Model.FoodItem;
 import dev.java10x.MagicFridgeAI.Repository.FoodItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FoodItemService {
 
     private final FoodItemRepository repository;
+    private final FoodItemMapper foodItemMapper;
 
-    public FoodItemService(FoodItemRepository repository) {
+    public FoodItemService(FoodItemRepository repository, FoodItemMapper foodItemMapper) {
         this.repository = repository;
+        this.foodItemMapper = foodItemMapper;
     }
 
-    public FoodItem criarFoodItem(FoodItem foodItem){
-       return repository.save(foodItem);
+    public FoodItemDTO criarFoodItem(FoodItemDTO foodItemDTO){
+        FoodItem foodItem = foodItemMapper.map(foodItemDTO);
+        repository.save(foodItem);
+       return foodItemMapper.map(foodItem);
     }
 
-    public FoodItem deletarFoodItem(Long id){
-        FoodItem foodItemDeletar = listarFoodItemId(id);
+    public FoodItemDTO deletarFoodItem(Long id){
+        FoodItemDTO foodItemDeletar = listarFoodItemId(id);
         if(foodItemDeletar !=null){
             repository.deleteById(id);
             return foodItemDeletar;
@@ -30,21 +37,26 @@ public class FoodItemService {
         }
     }
 
-    public FoodItem listarFoodItemId(Long id){
+    public FoodItemDTO listarFoodItemId(Long id){
         Optional<FoodItem> foodItemId = repository.findById(id);
         return foodItemId
+                .map(foodItemMapper::map)
                 .orElse(null);
     }
 
-    public List<FoodItem> listarFoodItems(){
+    public List<FoodItemDTO> listarFoodItems(){
         List<FoodItem> list = repository.findAll();
-        return list;
+        return list.stream()
+                .map(foodItemMapper::map)
+                .collect(Collectors.toList());
     }
 
-    public FoodItem alterarFoodItem(Long id, FoodItem foodItem){
+    public FoodItemDTO alterarFoodItem(Long id, FoodItemDTO foodItemDTO){
         if(repository.existsById(id)){
-            foodItem.setId(id);
-            return repository.save(foodItem);
+            foodItemDTO.setId(id);
+            FoodItem foodItemSalvo = foodItemMapper.map(foodItemDTO);
+            repository.save(foodItemSalvo);
+            return foodItemMapper.map(foodItemSalvo);
         }else{
             return null;
         }
