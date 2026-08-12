@@ -1,0 +1,705 @@
+<!
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lista de Ingredientes</title>
+    <style>
+        /* =========================================
+           CONFIGURAÇÕES GERAIS
+           ========================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f6f4;
+            color: #26352f;
+            min-height: 100vh;
+        }
+
+
+        /* =========================================
+           DIVISÃO PRINCIPAL DA TELA
+           ========================================= */
+
+        .pagina {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+
+        /* =========================================
+           LADO ESQUERDO - INGREDIENTES
+           ========================================= */
+
+        .lado-esquerdo {
+            width: 50%;
+            min-height: 100vh;
+
+            padding: 35px;
+
+            background: #f8faf9;
+
+            border-right: 2px solid #dce5e0;
+
+            overflow-y: auto;
+        }
+
+
+        /* Título do lado esquerdo */
+
+        .lado-esquerdo::before {
+            content: "Meus Ingredientes";
+
+            display: block;
+
+            margin-bottom: 25px;
+
+            font-size: 28px;
+            font-weight: bold;
+
+            color: #2f6f5e;
+        }
+
+
+        /* =========================================
+           FORMULÁRIO DE ADICIONAR INGREDIENTE
+           ========================================= */
+
+        details {
+            width: 100%;
+
+            background: white;
+
+            border-radius: 14px;
+
+            padding: 18px 22px;
+
+            margin-bottom: 30px;
+
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+        }
+
+
+        details summary {
+            cursor: pointer;
+
+            padding: 5px;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            color: #36745f;
+
+            list-style-position: inside;
+        }
+
+
+        details summary:hover {
+            color: #285c4b;
+        }
+
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+
+        /* =========================================
+           CAMPOS DO FORMULÁRIO
+           ========================================= */
+
+        .lado-esquerdo form {
+            display: flex;
+            flex-direction: column;
+
+            gap: 8px;
+        }
+
+
+        .lado-esquerdo form label {
+            margin-top: 8px;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            color: #465951;
+        }
+
+
+        .lado-esquerdo form input,
+        .lado-esquerdo form select {
+            width: 100%;
+
+            padding: 11px 12px;
+
+            border: 1px solid #d4ded9;
+
+            border-radius: 8px;
+
+            background: #fafcfb;
+
+            font-size: 14px;
+
+            outline: none;
+
+            transition: 0.2s;
+        }
+
+
+        .lado-esquerdo form input:focus,
+        .lado-esquerdo form select:focus {
+            border-color: #4f927d;
+
+            background: white;
+
+            box-shadow: 0 0 0 3px rgba(79, 146, 125, 0.12);
+        }
+
+
+        /* =========================================
+           BOTÃO CADASTRAR INGREDIENTE
+           ========================================= */
+
+        .lado-esquerdo form button {
+            margin-top: 15px;
+
+            padding: 12px 18px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #3f806d;
+
+            color: white;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .lado-esquerdo form button:hover {
+            background: #326b5a;
+
+            transform: translateY(-1px);
+
+            box-shadow: 0 4px 10px rgba(50, 107, 90, 0.2);
+        }
+
+
+        /* =========================================
+           TABELA DE INGREDIENTES
+           ========================================= */
+
+        table {
+            width: 100%;
+
+            border-collapse: separate;
+
+            border-spacing: 0 12px;
+        }
+
+
+        /* Esconde o cabeçalho */
+
+        thead {
+            display: none;
+        }
+
+
+        /* =========================================
+           CADA INGREDIENTE VIRA UM CARD
+           ========================================= */
+
+        tbody tr {
+            display: grid;
+
+            grid-template-columns: 1.5fr 1fr;
+
+            gap: 5px 15px;
+
+            position: relative;
+
+            padding: 18px;
+
+            background: white;
+
+            border-radius: 12px;
+
+            border-left: 5px solid #5ba88e;
+
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+
+            transition: 0.2s;
+        }
+
+
+        tbody tr:hover {
+            transform: translateY(-2px);
+
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+        }
+
+
+        /* =========================================
+           TEXTO DOS INGREDIENTES
+           ========================================= */
+
+        tbody td {
+            padding: 3px 0;
+
+            font-size: 14px;
+
+            color: #596961;
+        }
+
+
+        /* Nome */
+
+        tbody td:first-child {
+            font-size: 18px;
+
+            font-weight: bold;
+
+            color: #2f6f5e;
+        }
+
+
+        /* Categoria */
+
+        tbody td:nth-child(2) {
+            font-size: 12px;
+
+            color: #75847d;
+
+            text-transform: uppercase;
+        }
+
+
+        /* Quantidade */
+
+        tbody td:nth-child(3)::before {
+            content: "Quantidade: ";
+
+            font-weight: bold;
+
+            color: #40534b;
+        }
+
+
+        /* Validade */
+
+        tbody td:nth-child(4)::before {
+            content: "Validade: ";
+
+            font-weight: bold;
+
+            color: #40534b;
+        }
+
+
+        /* =========================================
+           BOTÃO DELETAR
+           ========================================= */
+
+        tbody td:nth-child(5) {
+            grid-column: 2;
+
+            text-align: right;
+
+            margin-top: -25px;
+        }
+
+
+        tbody td:nth-child(5) a {
+            display: inline-block;
+
+            padding: 6px 10px;
+
+            border-radius: 6px;
+
+            background: #fff0f0;
+
+            color: #c05252;
+
+            font-size: 12px;
+            font-weight: bold;
+
+            text-decoration: none;
+
+            transition: 0.2s;
+        }
+
+
+        tbody td:nth-child(5) a:hover {
+            background: #c05252;
+
+            color: white;
+        }
+
+
+        /* =========================================
+           LADO DIREITO - GERADOR
+           ========================================= */
+
+        .lado-direito {
+            width: 50%;
+            min-height: 100vh;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            padding: 45px 40px;
+
+            background: #eef5f1;
+
+            overflow-y: auto;
+        }
+
+
+        /* =========================================
+           FORMULÁRIO DO GERADOR
+           ========================================= */
+
+        .lado-direito form {
+            width: 100%;
+            max-width: 700px;
+
+            padding: 25px 30px;
+
+            background: white;
+
+            border-radius: 16px;
+
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
+
+            text-align: center;
+        }
+
+
+        /* =========================================
+           TÍTULO "GERADOR DE RECEITAS"
+           ========================================= */
+
+        .lado-direito form::before {
+            content: "Gerador de Receitas";
+
+            display: block;
+
+            margin-bottom: 20px;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            color: #2f6f5e;
+        }
+
+
+        /* =========================================
+           BOTÃO GERAR RECEITA
+           ========================================= */
+
+        .lado-direito form button {
+            width: 220px;
+
+            padding: 13px 20px;
+
+            margin: 0;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background: #e29b4d;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .lado-direito form button:hover {
+            background: #cc8438;
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 5px 12px rgba(204, 132, 56, 0.25);
+        }
+
+
+        /* =========================================
+           CARD DA RESPOSTA DO GEMINI
+           ========================================= */
+
+        .lado-direito > p {
+            width: 100%;
+
+            max-width: 700px;
+
+            margin: 25px 0 0;
+
+            padding: 28px 32px;
+
+            background: white;
+
+            border-radius: 16px;
+
+            border-top: 5px solid #5ba88e;
+
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
+
+            color: #3f4d47;
+
+            font-size: 15px;
+
+            line-height: 1.7;
+
+            text-align: left;
+
+            white-space: pre-wrap;
+
+            overflow-wrap: break-word;
+
+            max-height: 600px;
+
+            overflow-y: auto;
+        }
+
+
+        /* =========================================
+           TÍTULO DA RESPOSTA
+           ========================================= */
+
+        .lado-direito > p::before {
+            content: "🍳  Receita sugerida";
+
+            display: block;
+
+            margin-bottom: 20px;
+
+            padding-bottom: 12px;
+
+            border-bottom: 1px solid #e3ebe7;
+
+            font-size: 21px;
+
+            font-weight: bold;
+
+            color: #2f6f5e;
+        }
+
+
+        /* =========================================
+           ESCONDER CARD VAZIO
+           ========================================= */
+
+        .lado-direito > p:empty {
+            display: none;
+        }
+
+
+        /* =========================================
+           BARRA DE ROLAGEM DA RECEITA
+           ========================================= */
+
+        .lado-direito > p::-webkit-scrollbar {
+            width: 7px;
+        }
+
+
+        .lado-direito > p::-webkit-scrollbar-track {
+            background: #f0f4f2;
+
+            border-radius: 10px;
+        }
+
+
+        .lado-direito > p::-webkit-scrollbar-thumb {
+            background: #9bb8ac;
+
+            border-radius: 10px;
+        }
+
+
+        .lado-direito > p::-webkit-scrollbar-thumb:hover {
+            background: #6f9887;
+        }
+
+
+        /* =========================================
+           RESPONSIVIDADE - TABLET
+           ========================================= */
+
+        @media (max-width: 900px) {
+
+            .pagina {
+                flex-direction: column;
+            }
+
+
+            .lado-esquerdo,
+            .lado-direito {
+                width: 100%;
+            }
+
+
+            .lado-esquerdo {
+                min-height: auto;
+
+                border-right: none;
+
+                border-bottom: 2px solid #dce5e0;
+            }
+
+
+            .lado-direito {
+                min-height: 600px;
+            }
+        }
+
+
+        /* =========================================
+           RESPONSIVIDADE - CELULAR
+           ========================================= */
+
+        @media (max-width: 550px) {
+
+            .lado-esquerdo {
+                padding: 20px;
+            }
+
+
+            .lado-esquerdo::before {
+                font-size: 24px;
+            }
+
+
+            tbody tr {
+                grid-template-columns: 1fr;
+            }
+
+
+            tbody td:nth-child(5) {
+                grid-column: 1;
+
+                text-align: left;
+
+                margin-top: 5px;
+            }
+
+
+            .lado-direito {
+                padding: 25px 15px;
+            }
+
+
+            .lado-direito form {
+                padding: 22px;
+            }
+
+
+            .lado-direito form::before {
+                font-size: 24px;
+            }
+
+
+            .lado-direito form button {
+                width: 100%;
+            }
+
+
+            .lado-direito > p {
+                padding: 20px;
+
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="pagina">
+    <section class="lado-esquerdo">
+        <details>
+            <summary>Adicionar ingrediente</summary>
+            <div class="form-container">
+
+                <form th:action="@{/food-recipe/ui/save}" th:object="${foodItem}" method="post">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" th:field="*{nome}" required>
+
+                    <label>Categoria:</label>
+                    <select th:field="*{categoriaFoodItem}">
+                        <option value="LATICICIOS">LATICICIOS</option>
+                        <option value="CARNES_OVOS">CARNES_OVOS</option>
+                        <option value="GRAOS_CEREAIS">GRAOS_CEREAIS</option>
+                        <option value="LEGUMINOSAS">LEGUMINOSAS</option>
+                        <option value="HORTALICAS">HORTALICAS</option>
+                        <option value="FRUTAS">FRUTAS</option>
+                        <option value="OLEAGINOSAS">OLEAGINOSAS</option>
+                    </select>
+
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" th:field="*{quantidade}" required>
+
+                    <label for="dataValidade">Data validade:</label>
+                    <input type="date" id="dataValidade" th:field="*{dataValidade}" required>
+
+                    <button type="submit">Cadastrar Item Alimenticio</button>
+                </form>
+            </div>
+        </details>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Quantidade</th>
+                <th>Data de Validade</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="ingrediente: ${listFoodItems}">
+                <td th:text="${ingrediente.nome}"></td>
+                <td th:text="${ingrediente.categoriaFoodItem}"></td>
+                <td th:text="${ingrediente.quantidade}"></td>
+                <td th:text="${ingrediente.dataValidade}"></td>
+                <td><a th:href="@{/food-recipe/ui/delete/{id}(id=${ingrediente.id})}">Deletar Item</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="lado-direito">
+        <form th:action="@{/food-recipe/ui/generateRecipe}" method="post">
+            <button type="submit">Gerar Receita</button>
+        </form>
+        <p th:text="${responseGemini}"></p>
+    </section>
+
+</div>
+
+
+</body>
+</html>
